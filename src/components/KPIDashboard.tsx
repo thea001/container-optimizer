@@ -1,7 +1,7 @@
 // src/components/KPIDashboard.tsx
-import React from 'react';
-import { useContainerStore } from '../store/containerStore';
-import { Package, Scale, Box, Percent, TrendingUp } from 'lucide-react';
+import React from "react";
+import { useContainerStore } from "../store/containerStore";
+import { Package, Scale, Box, Percent, TrendingUp } from "lucide-react";
 
 interface KPICardProps {
   title: string;
@@ -11,24 +11,30 @@ interface KPICardProps {
   color?: string;
 }
 
-const KPICard: React.FC<KPICardProps> = ({ title, value, icon, percentage, color = 'blue' }) => {
+const KPICard: React.FC<KPICardProps> = ({
+  title,
+  value,
+  icon,
+  percentage,
+  color = "blue",
+}) => {
   const colorClasses = {
-    blue: 'bg-blue-50 border-blue-200',
-    green: 'bg-green-50 border-green-200',
-    yellow: 'bg-yellow-50 border-yellow-200',
-    purple: 'bg-purple-50 border-purple-200'
+    blue: "bg-blue-50 border-blue-200",
+    green: "bg-green-50 border-green-200",
+    yellow: "bg-yellow-50 border-yellow-200",
+    purple: "bg-purple-50 border-purple-200",
   };
 
   return (
-    <div className={`p-4 rounded-lg border ${colorClasses[color as keyof typeof colorClasses]} relative overflow-hidden`}>
+    <div
+      className={`p-4 rounded-lg border ${colorClasses[color as keyof typeof colorClasses]} relative overflow-hidden`}
+    >
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm text-gray-600 mb-1">{title}</p>
           <p className="text-2xl font-semibold">{value}</p>
         </div>
-        <div className={`p-2 rounded-lg bg-${color}-100`}>
-          {icon}
-        </div>
+        <div className={`p-2 rounded-lg bg-${color}-100`}>{icon}</div>
       </div>
       {percentage !== undefined && (
         <div className="mt-3">
@@ -37,7 +43,7 @@ const KPICard: React.FC<KPICardProps> = ({ title, value, icon, percentage, color
             <span>{percentage.toFixed(1)}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-1.5">
-            <div 
+            <div
               className={`bg-${color}-600 h-1.5 rounded-full transition-all duration-500`}
               style={{ width: `${Math.min(percentage, 100)}%` }}
             />
@@ -61,15 +67,15 @@ export const KPIDashboard: React.FC = () => {
         percentage={kpis.weightPercentage}
         color="blue"
       />
-      
+
       <KPICard
         title="Volume Utilization"
-        value={`${kpis.filledVolume.toFixed(1)} / ${kpis.totalVolume.toFixed(1)} m³`}
+        value={`${kpis.filledVolume.toFixed(1)} / ${kpis.totalVolume.toFixed(1)} cm³`}
         icon={<Box className="w-5 h-5 text-green-600" />}
         percentage={kpis.volumePercentage}
         color="green"
       />
-      
+
       <KPICard
         title="Boxes Placed"
         value={`${kpis.boxesPlaced} / ${kpis.totalBoxes}`}
@@ -77,7 +83,7 @@ export const KPIDashboard: React.FC = () => {
         percentage={(kpis.boxesPlaced / Math.max(kpis.totalBoxes, 1)) * 100}
         color="yellow"
       />
-      
+
       <KPICard
         title="Overall Efficiency"
         value={`${kpis.utilizationScore.toFixed(1)}%`}

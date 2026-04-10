@@ -7,7 +7,7 @@ export class PackingOptimizer {
 
   constructor(container: Container) {
     this.container = container;
-    this.padding = 0.02; // 5cm padding
+    this.padding = 0; // 5cm padding
 
     // Initialize with the container space (with padding considered)
     this.spaces = [

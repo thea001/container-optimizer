@@ -1,25 +1,28 @@
 // src/components/Controls.tsx
-import React, { useState } from 'react';
-import { useContainerStore } from '../store/containerStore';
-import { Zap, RotateCcw, Plus, Trash2, Download, Upload } from 'lucide-react';
-import { AddBoxModal } from './AddBoxModal';
+import React, { useState } from "react";
+import { useContainerStore } from "../store/containerStore";
+import { Zap, RotateCcw, Plus, Trash2, Download, Upload } from "lucide-react";
+import { AddBoxModal } from "./AddBoxModal";
 
 export const Controls: React.FC = () => {
-  const { optimize, reset, clearAllBoxes, container, boxes } = useContainerStore();
+  const { optimize, reset, clearAllBoxes, container, boxes } =
+    useContainerStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleExport = () => {
     const data = {
       container: useContainerStore.getState().container,
       boxes: useContainerStore.getState().boxes,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `container-load-${new Date().toISOString().slice(0,10)}.json`;
+    a.download = `chargement-remorque-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
   };
 
@@ -31,10 +34,10 @@ export const Controls: React.FC = () => {
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target?.result as string);
-        // Here you would dispatch actions to load the data
-        console.log('Imported data:', data);
+        // Ici vous pouvez dispatcher les actions pour charger les données
+        console.log("Données importées :", data);
       } catch (error) {
-        alert('Invalid file format');
+        alert("Format de fichier invalide");
       }
     };
     reader.readAsText(file);
@@ -50,7 +53,7 @@ export const Controls: React.FC = () => {
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus className="w-4 h-4" />
-            Add Box
+            Ajouter une palette
           </button>
 
           <button
@@ -59,7 +62,7 @@ export const Controls: React.FC = () => {
             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Zap className="w-4 h-4" />
-            Optimize
+            Optimiser
           </button>
 
           <button
@@ -68,7 +71,7 @@ export const Controls: React.FC = () => {
             className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <RotateCcw className="w-4 h-4" />
-            Reset
+            Réinitialiser
           </button>
 
           <button
@@ -77,7 +80,7 @@ export const Controls: React.FC = () => {
             className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Trash2 className="w-4 h-4" />
-            Clear All
+            Supprimer toutes les palettes
           </button>
 
           <div className="flex-1" />
@@ -88,12 +91,12 @@ export const Controls: React.FC = () => {
             className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
             <Download className="w-4 h-4" />
-            Export
+            Exporter
           </button>
 
           <label className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
             <Upload className="w-4 h-4" />
-            Import
+            Importer
             <input
               type="file"
               accept=".json"

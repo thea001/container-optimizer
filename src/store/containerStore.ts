@@ -1,11 +1,18 @@
 import { create } from "zustand";
 import { Container, Box, KPIs, Vector3 } from "../types";
 import { PackingOptimizer } from "../utils/packingAlgorithm";
+import {
+  getScaledDimensions,
+  cmToVisual,
+  visualToCm,
+  ScaledDimensions,
+} from "../utils/scaling";
 
 interface ContainerState {
   container: Container | null;
   boxes: Box[];
   isOptimized: boolean;
+  scaledDimensions: ScaledDimensions | null;
 
   // Actions
   setContainer: (container: Container) => void;
@@ -16,16 +23,29 @@ interface ContainerState {
   reset: () => void;
   calculateKPIs: () => KPIs;
   clearAllBoxes: () => void;
-  updateBoxes: (boxes: Box[]) => void;
+  getVisualPosition: (
+    box: Box,
+  ) => { x: number; y: number; z: number } | undefined;
 }
 
 export const useContainerStore = create<ContainerState>((set, get) => ({
   container: null,
   boxes: [],
   isOptimized: false,
+  scaledDimensions: null,
 
   setContainer: (container) => {
-    set({ container, boxes: [], isOptimized: false });
+    const scaledDimensions = getScaledDimensions(
+      container.length,
+      container.width,
+      container.height,
+    );
+    set({
+      container,
+      boxes: [],
+      isOptimized: false,
+      scaledDimensions,
+    });
   },
 
   addBox: (boxData) => {
@@ -56,31 +76,52 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
     }));
   },
 
-  // new action
-  updateBoxes: (boxes) => {
-    set({ boxes, isOptimized: true });
-  },
-
   optimize: () => {
-    const { container, boxes } = get();
-    if (!container) return;
+    const { container, boxes, scaledDimensions } = get();
+    if (!container || !scaledDimensions) return;
 
-    const optimizer = new PackingOptimizer(container);
-    let optimizedBoxes = optimizer.optimizeBoxes(boxes);
+    // Create a virtual container with scaled dimensions for packing
+    const virtualContainer = {
+      ...container,
+      length: scaledDimensions.visualLength,
+      width: scaledDimensions.visualWidth,
+      height: scaledDimensions.visualHeight,
+    };
 
-    // Add micro-offsets to prevent z-fighting
+    // Scale boxes to match virtual container
+    const scaledBoxes = boxes.map((box) => ({
+      ...box,
+      length: box.length * scaledDimensions.scaleFactor,
+      width: box.width * scaledDimensions.scaleFactor,
+      height: box.height * scaledDimensions.scaleFactor,
+    }));
+
+    const optimizer = new PackingOptimizer(virtualContainer);
+    let optimizedBoxes = optimizer.optimizeBoxes(scaledBoxes);
+
+    // Convert positions back to cm scale for storage
     optimizedBoxes = optimizedBoxes.map((box, index) => {
       if (box.position) {
         return {
           ...box,
+          // Restore original dimensions
+          length: box.length / scaledDimensions.scaleFactor,
+          width: box.width / scaledDimensions.scaleFactor,
+          height: box.height / scaledDimensions.scaleFactor,
           position: {
-            x: box.position.x + index * 0.0001, // Tiny offset to prevent overlapping
-            y: box.position.y + index * 0.0001,
-            z: box.position.z + index * 0.0001,
+            x: box.position.x / scaledDimensions.scaleFactor,
+            y: box.position.y / scaledDimensions.scaleFactor,
+            z: box.position.z / scaledDimensions.scaleFactor,
           },
         };
       }
-      return box;
+      return {
+        ...box,
+        // Restore original dimensions even if not placed
+        length: box.length / scaledDimensions.scaleFactor,
+        width: box.width / scaledDimensions.scaleFactor,
+        height: box.height / scaledDimensions.scaleFactor,
+      };
     });
 
     // Check weight constraint
@@ -111,6 +152,17 @@ export const useContainerStore = create<ContainerState>((set, get) => ({
 
   clearAllBoxes: () => {
     set({ boxes: [], isOptimized: false });
+  },
+
+  getVisualPosition: (box) => {
+    const { scaledDimensions } = get();
+    if (!box.position || !scaledDimensions) return undefined;
+
+    return {
+      x: box.position.x * scaledDimensions.scaleFactor,
+      y: box.position.y * scaledDimensions.scaleFactor,
+      z: box.position.z * scaledDimensions.scaleFactor,
+    };
   },
 
   calculateKPIs: () => {
