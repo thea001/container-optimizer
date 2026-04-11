@@ -74,31 +74,6 @@ const ContainerWireframe: React.FC = () => {
 
   const visualY = scaledDimensions.visualHeight / 2;
 
-  // Helper function to create text with background using HTML div
-  const createTextWithBackground = (
-    text: string,
-    position: [number, number, number],
-    color: string,
-    rotation?: [number, number, number],
-  ) => {
-    return (
-      <Text
-        position={position}
-        rotation={rotation}
-        fontSize={0.3}
-        color={color}
-        anchorX="center"
-        anchorY="middle"
-        fontWeight="bold"
-        outlineWidth={0.02}
-        outlineColor="white"
-        frustumCulled={false}
-      >
-        {text}
-      </Text>
-    );
-  };
-
   return (
     <group
       position={[
