@@ -1,12 +1,7 @@
 import { create } from "zustand";
 import { Container, Box, KPIs, Vector3 } from "../types";
 import { PackingOptimizer } from "../utils/packingAlgorithm";
-import {
-  getScaledDimensions,
-  cmToVisual,
-  visualToCm,
-  ScaledDimensions,
-} from "../utils/scaling";
+import { getScaledDimensions, ScaledDimensions } from "../utils/scaling";
 
 interface ContainerState {
   container: Container | null;

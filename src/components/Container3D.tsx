@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Grid, Environment, Text } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, Grid, Text } from "@react-three/drei";
 import * as THREE from "three";
 import { useContainerStore } from "../store/containerStore";
 import { Box } from "../types";

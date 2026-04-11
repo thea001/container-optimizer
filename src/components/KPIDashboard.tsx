@@ -1,7 +1,7 @@
 // src/components/KPIDashboard.tsx
 import React from "react";
 import { useContainerStore } from "../store/containerStore";
-import { Package, Scale, Box, Percent, TrendingUp } from "lucide-react";
+import { Package, Scale, Box, TrendingUp } from "lucide-react";
 
 interface KPICardProps {
   title: string;

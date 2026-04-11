@@ -3,7 +3,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useContainerStore } from "../store/containerStore";
 import { Container } from "../types";
-import { Package, Scale, Ruler } from "lucide-react";
+import { Package, Scale } from "lucide-react";
 
 interface ContainerFormData {
   name: string;

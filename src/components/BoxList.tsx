@@ -8,7 +8,6 @@ import {
   RotateCw,
   CheckCircle,
   XCircle,
-  BarChart3,
   Layers,
   Weight,
   Box,
